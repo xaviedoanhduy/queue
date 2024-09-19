@@ -104,7 +104,7 @@ class QueueJob(models.Model):
     date_done = fields.Datetime(readonly=True)
     exec_time = fields.Float(
         string="Execution Time (avg)",
-        group_operator="avg",
+        aggregator="avg",
         help="Time required to execute this job in seconds. Average when grouped.",
     )
     date_cancelled = fields.Datetime(readonly=True)
@@ -326,7 +326,7 @@ class QueueJob(models.Model):
             elif state == CANCELLED:
                 job_.set_cancelled(result=result)
                 job_.store()
-                record.env["queue.job"].flush()
+                record.env["queue.job"].flush_model()
                 job_.cancel_dependent_jobs()
             else:
                 raise ValueError("State not supported: %s" % state)
